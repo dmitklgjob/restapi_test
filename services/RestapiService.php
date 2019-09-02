@@ -4,18 +4,19 @@ namespace app\services;
 
 use Yii;
 use app\models\Leads;
+use yii\data\ActiveDataProvider;
 
 class RestapiService {
 
-    private $Model = '';
+    private $Model = null;
     private $items_per_page = 2;
     private $User = null;
     private $arrayBody = [];
 
-    public function __construct($Model){
-    	$this->User = Yii::$app->user->identity;
-        $this->Model = 'app\\models\\' . $Model; 
-        $this->arrayBody = json_decode(Yii::$app->request->getRawBody(), true);    
+    public function __construct($Model, $User, $arrayBody){
+    	$this->User = $User;
+        $this->Model = $Model; 
+        $this->arrayBody = $arrayBody; 
     }
 
     public function checkJson() {
@@ -27,12 +28,12 @@ class RestapiService {
     public function create() {
 
     	$this->checkJson();
-    	$Item = new Leads();
+    	$Item = $this->Model;
 
     	$Item->name = $this->arrayBody['name'] ?? '';
     	$Item->source_id = $this->arrayBody['source_id'] ?? '';
     	$Item->status = $this->arrayBody['status'] ?? '';
-    	$Item->created_by = $this->User->username;
+    	$Item->created_by = $this->User->identity->username;
 
 
 
@@ -57,13 +58,12 @@ class RestapiService {
     }
 
     public function items() {
+
     	$request = Yii::$app->request;
-    	$page_number = $request->get('page', 1);
     	$status_filter = $request->get('status', null);
     	$source_id_filter = $request->get('source_id', null);
 
-    	$Query = Leads::find();
-    	$Query->orderBy('id');
+    	$Query = $this->Model::find();
 
     	if ($status_filter) {
     		$Query->andWhere(['status' => $status_filter]);
@@ -73,19 +73,25 @@ class RestapiService {
     		$Query->andWhere(['source_id' => $source_id_filter]);
     	}
 
-    	$count = $Query->count();
 
-    	$pages = $count > $this->items_per_page ? ceil($count/$this->items_per_page) : 1;
+        $provider = new ActiveDataProvider([
+            'query' => $Query,
+            'pagination' => [
+                'pageSize' => $this->items_per_page,
+            ],
+            'sort' => [
+                'defaultOrder' => [
+                    'id' => SORT_ASC,
+                ]
+            ],
+        ]);
 
-    	if ($page_number > $pages) {
-    		$page_number = $pages;
-    	}
 
-    	$Query->offset(($page_number-1)*$this->items_per_page)->limit($this->items_per_page);
+    	$count = $provider->getTotalCount();
 
-    	$Items = $Query->asArray()->all();
+    	$Items = $provider->getModels();
 
-    	return ['data' => $Items, 'count' => $count, 'pages' => $pages];
+    	return ['data' => $Items, 'count' => $count];
     }
 
 }

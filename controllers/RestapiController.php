@@ -6,10 +6,24 @@ use Yii;
 use app\models\User;
 use \yii\filters\auth\HttpBasicAuth;
 use yii\filters\AccessControl;
+use app\services\RestapiService;
 
 class RestapiController extends \yii\web\Controller
 {
 	public $enableCsrfValidation = false;
+	protected $apiService;
+
+    public function __construct
+    (
+        $id, 
+        $module, 
+        RestapiService $apiService, 
+        array $config = []
+    )
+    {
+        parent::__construct($id, $module, $config);
+        $this->apiService = $apiService;
+    }
 
 	public function init()
 	{
@@ -38,16 +52,15 @@ class RestapiController extends \yii\web\Controller
 
 	public function actionLeadsCreate()
     {
-    	$service = Yii::$container->get('apiLeadsService');
-    	$result = $service->create();
+    	$result = $this->apiService->create();
     	return $this->asJson($result);
     }
 
 	public function actionLeads()
     {
-    	$service = Yii::$container->get('apiLeadsService');
-    	$result = $service->items();
-    	return $this->asJson(['success' => true, 'count' => $result['count'], 'pages' => $result['pages'],'data' => $result['data']]);
+    	
+    	$result = $this->apiService->items();
+    	return $this->asJson(['success' => true, 'count' => $result['count'], 'data' => $result['data']]);
     }
 
 	public function actionError()
