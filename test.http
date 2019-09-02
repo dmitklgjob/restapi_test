@@ -1,0 +1,112 @@
+curl --user admin:admin -i -d '{"name":"leads8","source_id":"8", "status":9 }' -H 'Content-Type: application/json'  http://restapi.loc/api/leads/create
+
+HTTP/1.1 200 OK
+Server: nginx/1.15.9 (Ubuntu)
+Date: Mon, 02 Sep 2019 09:38:26 GMT
+Content-Type: application/json; charset=UTF-8
+Transfer-Encoding: chunked
+Connection: keep-alive
+X-Debug-Tag: 5d6ce312c2250
+X-Debug-Duration: 27
+X-Debug-Link: /debug/default/view?tag=5d6ce312c2250
+
+{"success":true,"data":{"name":"leads8","source_id":"8","status":9,"created_by":"admin","id":13}}
+
+--------------------------------------------------------------------------------------------------
+
+curl --user admin:admin1 -i -d '{"name":"leads8","source_id":"8", "status":9 }' -H 'Content-Type: application/json'  http://restapi.loc/api/leads/create
+
+HTTP/1.1 401 Unauthorized
+Server: nginx/1.15.9 (Ubuntu)
+Date: Mon, 02 Sep 2019 09:39:19 GMT
+Content-Type: application/json; charset=UTF-8
+Transfer-Encoding: chunked
+Connection: keep-alive
+X-Debug-Tag: 5d6ce34701973
+X-Debug-Duration: 5
+X-Debug-Link: /debug/default/view?tag=5d6ce34701973
+
+{"success":false,"statusCode":401,"message":"Your request was made with invalid credentials."}
+
+
+---------------------------------------------------------------------------------------------------
+
+curl -X GET --user admin:admin -i http://restapi.loc/api/leads
+
+HTTP/1.1 200 OK
+Server: nginx/1.15.9 (Ubuntu)
+Date: Mon, 02 Sep 2019 09:46:31 GMT
+Content-Type: application/json; charset=UTF-8
+Transfer-Encoding: chunked
+Connection: keep-alive
+X-Debug-Tag: 5d6ce4f7965c6
+X-Debug-Duration: 20
+X-Debug-Link: /debug/default/view?tag=5d6ce4f7965c6
+
+{"success":true,"count":14,"pages":7,"data":[{"id":1,"name":"lead1","source_id":1,"status":2,"created_at":"2019-09-02 11:16:34","created_by":"admin"},{"id":2,"name":"lead2","source_id":2,"status":2,"created_at":"2019-09-02 11:16:54","created_by":"admin"}]}
+
+----------------------------------------------------------------------------------------------------
+
+curl -X GET --user admin:admin -i http://restapi.loc/api/leads?page=3
+
+HTTP/1.1 200 OK
+Server: nginx/1.15.9 (Ubuntu)
+Date: Mon, 02 Sep 2019 09:47:34 GMT
+Content-Type: application/json; charset=UTF-8
+Transfer-Encoding: chunked
+Connection: keep-alive
+X-Debug-Tag: 5d6ce536bea24
+X-Debug-Duration: 14
+X-Debug-Link: /debug/default/view?tag=5d6ce536bea24
+
+{"success":true,"count":14,"pages":7,"data":[{"id":5,"name":"lead4","source_id":4,"status":4,"created_at":"2019-09-02 11:48:43","created_by":"admin"},{"id":6,"name":"lead4","source_id":4,"status":4,"created_at":"2019-09-02 11:49:06","created_by":"admin"}]}
+
+-----------------------------------------------------------------------------------------------------
+
+curl -X GET --user admin:admin -i http://restapi.loc/api/leads?status=2
+
+HTTP/1.1 200 OK
+Server: nginx/1.15.9 (Ubuntu)
+Date: Mon, 02 Sep 2019 09:54:16 GMT
+Content-Type: application/json; charset=UTF-8
+Transfer-Encoding: chunked
+Connection: keep-alive
+X-Debug-Tag: 5d6ce6c865e75
+X-Debug-Duration: 16
+X-Debug-Link: /debug/default/view?tag=5d6ce6c865e75
+
+{"success":true,"count":3,"pages":2,"data":[{"id":1,"name":"lead1","source_id":1,"status":2,"created_at":"2019-09-02 11:16:34","created_by":"admin"},{"id":2,"name":"lead2","source_id":2,"status":2,"created_at":"2019-09-02 11:16:54","created_by":"admin"}]}
+
+
+------------------------------------------------------------------------------------------------------------
+
+curl -X GET --user admin:admin -i 'http://restapi.loc/api/leads?page=2&status=2'
+HTTP/1.1 200 OK
+Server: nginx/1.15.9 (Ubuntu)
+Date: Mon, 02 Sep 2019 09:57:56 GMT
+Content-Type: application/json; charset=UTF-8
+Transfer-Encoding: chunked
+Connection: keep-alive
+X-Debug-Tag: 5d6ce7a45e505
+X-Debug-Duration: 17
+X-Debug-Link: /debug/default/view?tag=5d6ce7a45e505
+
+{"success":true,"count":3,"pages":2,"data":[{"id":3,"name":"lead1","source_id":1,"status":2,"created_at":"2019-09-02 11:47:50","created_by":"admin"}]}
+
+----------------------------------------------------------------------------------------------------------------
+
+
+curl -X GET --user admin:admin -i 'http://restapi.loc/api/leads?page=1&status=2&source_id=2'
+HTTP/1.1 200 OK
+Server: nginx/1.15.9 (Ubuntu)
+Date: Mon, 02 Sep 2019 10:02:19 GMT
+Content-Type: application/json; charset=UTF-8
+Transfer-Encoding: chunked
+Connection: keep-alive
+X-Debug-Tag: 5d6ce8abe30a6
+X-Debug-Duration: 18
+X-Debug-Link: /debug/default/view?tag=5d6ce8abe30a6
+
+{"success":true,"count":1,"pages":1,"data":[{"id":2,"name":"lead2","source_id":2,"status":2,"created_at":"2019-09-02 11:16:54","created_by":"admin"}]}
+
+
